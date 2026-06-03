@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-safe-bg text-safe-text min-h-screen;
+    font-size: 16px;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white font-medium py-3 px-6 rounded-xl
+           hover:bg-primary-600 active:bg-primary-700
+           transition-all duration-200 ease-in-out
+           focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-white font-medium py-3 px-6 rounded-xl
+           hover:bg-secondary-600 active:bg-secondary-700
+           transition-all duration-200 ease-in-out
+           focus:outline-none focus:ring-2 focus:ring-secondary-300 focus:ring-offset-2;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary text-primary font-medium py-3 px-6 rounded-xl
+           hover:bg-primary hover:text-white
+           transition-all duration-200 ease-in-out
+           focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2;
+  }
+
+  .card {
+    @apply bg-safe-card rounded-2xl shadow-sm border border-gray-100 p-6
+           transition-shadow duration-200 hover:shadow-md;
+  }
+
+  .quick-exit-btn {
+    @apply fixed bottom-4 right-4 z-[9999]
+           bg-gray-500 hover:bg-gray-600 text-white
+           text-sm font-medium py-2 px-4 rounded-lg
+           shadow-lg transition-all duration-150
+           opacity-70 hover:opacity-100;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
