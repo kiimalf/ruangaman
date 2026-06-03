@@ -8,6 +8,10 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Knowledge base seeding will be added in M1
+        $this->call([
+            HypothesisSeeder::class,
+            QuestionSeeder::class,
+            RuleSeeder::class,
+        ]);
     }
 }

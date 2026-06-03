@@ -161,7 +161,7 @@ Setelah membuat akun admin:
 | Milestone | Status | Deliverable |
 |-----------|--------|-------------|
 | M0 — Fondasi & Infrastruktur | ✅ | Repo, Laravel, DB schema, env config |
-| M1 — Knowledge Base | ⬜ | Seed data rules UU TPKS |
+| M1 — Knowledge Base | ✅ | Seed data rules UU TPKS (10 hipotesis, 17 pertanyaan, 13 rules) |
 | M2 — Mesin Backward Chaining | ⬜ | InferenceEngine, API endpoints |
 | M3 — Frontend Core | ⬜ | React SPA: landing, pertanyaan, konklusi |
 | M4 — PDF Generator | ⬜ | DomPDF BAP template |
