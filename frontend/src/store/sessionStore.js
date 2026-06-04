@@ -1,14 +1,21 @@
 import { create } from 'zustand';
 
 const useSessionStore = create((set) => ({
-  sessionToken: null,
+  sessionToken: sessionStorage.getItem('ruangaman_session_token') || null,
   currentQuestion: null,
   answers: {},
   conclusion: null,
   isLoading: false,
   error: null,
 
-  setSessionToken: (token) => set({ sessionToken: token }),
+  setSessionToken: (token) => {
+    if (token) {
+      sessionStorage.setItem('ruangaman_session_token', token);
+    } else {
+      sessionStorage.removeItem('ruangaman_session_token');
+    }
+    set({ sessionToken: token });
+  },
   setCurrentQuestion: (question) => set({ currentQuestion: question }),
   addAnswer: (questionId, answer) =>
     set((state) => ({
@@ -18,7 +25,8 @@ const useSessionStore = create((set) => ({
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
 
-  resetSession: () =>
+  resetSession: () => {
+    sessionStorage.removeItem('ruangaman_session_token');
     set({
       sessionToken: null,
       currentQuestion: null,
@@ -26,7 +34,8 @@ const useSessionStore = create((set) => ({
       conclusion: null,
       isLoading: false,
       error: null,
-    }),
+    });
+  },
 }));
 
 export default useSessionStore;

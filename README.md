@@ -163,7 +163,7 @@ Setelah membuat akun admin:
 | M0 — Fondasi & Infrastruktur | ✅ | Repo, Laravel, DB schema, env config |
 | M1 — Knowledge Base | ✅ | Seed data rules UU TPKS (10 hipotesis, 17 pertanyaan, 13 rules) |
 | M2 — Mesin Backward Chaining | ✅ | InferenceEngine service, API endpoints, 14 tests passed |
-| M3 — Frontend Core | ⬜ | React SPA: landing, pertanyaan, konklusi |
+| M3 — Frontend Core | ✅ | React SPA: landing, pertanyaan, konklusi |
 | M4 — PDF Generator | ⬜ | DomPDF BAP template |
 | M5 — Admin Panel & Polish | ⬜ | Filament CRUD, statistik, UI polish |
 | M6 — QA & Deployment | ⬜ | Bug fix, deploy, UAT |
