@@ -22,4 +22,5 @@ Route::prefix('session')->group(function () {
     Route::post('/start', [SessionController::class, 'start']);
     Route::post('/answer', [SessionController::class, 'answer']);
     Route::get('/conclude', [SessionController::class, 'conclude']);
+    Route::get('/export-pdf', [SessionController::class, 'exportPdf']);
 });

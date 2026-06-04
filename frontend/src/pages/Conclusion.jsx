@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import useSessionStore from '../store/sessionStore';
-import { getConclusion } from '../services/api';
+import { getConclusion, API_URL } from '../services/api';
 import ConclusionCard from '../components/ConclusionCard';
 
 export default function Conclusion() {
@@ -35,12 +35,9 @@ export default function Conclusion() {
   }, [sessionToken, conclusion, navigate, setConclusion]);
 
   const handleDownloadPdf = () => {
-    // API endpoint PDF belum diimplementasikan di M2/M3 (akan ada di M4)
-    // Placeholder untuk fitur download
-    alert('Fitur Unduh Draf Kronologis PDF akan tersedia pada rilis berikutnya.');
-    
-    // Nanti akan diganti dengan:
-    // window.open(`http://localhost:8000/api/session/export-pdf?session_token=${sessionToken}`);
+    // API endpoint PDF
+    // Buka di tab baru / trigger download browser langsung dari URL backend
+    window.open(`${API_URL}/session/export-pdf?session_token=${sessionToken}`);
   };
 
   const handleFinish = () => {

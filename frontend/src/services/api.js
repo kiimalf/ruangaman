@@ -1,4 +1,4 @@
-const API_URL = '/api';
+export const API_URL = '/api';
 
 export const startSession = async () => {
   const response = await fetch(`${API_URL}/session/start`, {
