@@ -40,7 +40,7 @@ class InferenceEngine
         if ($session->concluded_at !== null) {
             return [
                 'next_question' => null,
-                'conclusion' => $this->formatConclusion($session),
+                'conclusion' => $this->evaluateSessionConclusion($session, false),
             ];
         }
 
@@ -181,6 +181,11 @@ class InferenceEngine
      */
     public function conclude(ExpertSession $session): array
     {
+        return $this->evaluateSessionConclusion($session, true);
+    }
+
+    private function evaluateSessionConclusion(ExpertSession $session, bool $saveToDb): array
+    {
         $answers = $session->answers()->pluck('answer', 'question_id')->toArray();
         $gatewayQuestion = Question::orderBy('id')->first();
 
@@ -189,7 +194,9 @@ class InferenceEngine
             !isset($answers[$gatewayQuestion->id]) ||
             strtoupper($answers[$gatewayQuestion->id]) === 'TIDAK') {
 
-            $session->update(['concluded_at' => now()]);
+            if ($saveToDb) {
+                $session->update(['concluded_at' => now()]);
+            }
 
             return [
                 'type' => 'BUKAN_TPKS',
@@ -202,7 +209,9 @@ class InferenceEngine
 
         // Case 2: P1 = SAYA_TIDAK_YAKIN → Konsultasi Lanjut
         if (strtoupper($answers[$gatewayQuestion->id]) === 'SAYA_TIDAK_YAKIN') {
-            $session->update(['concluded_at' => now()]);
+            if ($saveToDb) {
+                $session->update(['concluded_at' => now()]);
+            }
 
             return [
                 'type' => 'KONSULTASI_LANJUT',
@@ -230,10 +239,12 @@ class InferenceEngine
         if (!empty($provenHypotheses)) {
             $primary = reset($provenHypotheses);
 
-            $session->update([
-                'concluded_at' => now(),
-                'conclusion_id' => $primary->id,
-            ]);
+            if ($saveToDb) {
+                $session->update([
+                    'concluded_at' => now(),
+                    'conclusion_id' => $primary->id,
+                ]);
+            }
 
             return [
                 'type' => 'TERPENUHI',
@@ -252,10 +263,12 @@ class InferenceEngine
         // Case 3b: P1=YA but no specific hypothesis proven → Fallback H10
         $fallback = Hypothesis::where('pasal_uutpks', 'Pasal 4 Ayat (2)')->first();
 
-        $session->update([
-            'concluded_at' => now(),
-            'conclusion_id' => $fallback?->id,
-        ]);
+        if ($saveToDb) {
+            $session->update([
+                'concluded_at' => now(),
+                'conclusion_id' => $fallback?->id,
+            ]);
+        }
 
         return [
             'type' => 'FALLBACK',
@@ -271,19 +284,13 @@ class InferenceEngine
         ];
     }
 
-    /**
-     * Get conclusion data for an already-concluded session.
-     */
     public function getConclusion(string $sessionToken): array
     {
         $session = ExpertSession::findOrFail($sessionToken);
 
-        if ($session->concluded_at === null) {
-            // Session not yet concluded — run conclude
-            return $this->conclude($session);
-        }
-
-        return $this->formatConclusion($session);
+        // Always re-evaluate so we can return ALL matching hypotheses,
+        // not just the primary one saved in the database.
+        return $this->evaluateSessionConclusion($session, false);
     }
 
     /**
@@ -299,34 +306,5 @@ class InferenceEngine
         ];
     }
 
-    /**
-     * Format conclusion from an already-concluded session.
-     */
-    private function formatConclusion(ExpertSession $session): array
-    {
-        if ($session->conclusion_id) {
-            $hypothesis = $session->conclusion;
-
-            return [
-                'type' => 'TERPENUHI',
-                'hypotheses' => [[
-                    'id' => $hypothesis->id,
-                    'label' => $hypothesis->label,
-                    'pasal' => $hypothesis->pasal_uutpks,
-                    'description' => $hypothesis->description,
-                ]],
-                'message' => 'Berdasarkan jawaban Anda, kejadian yang Anda alami memenuhi unsur tindak pidana kekerasan seksual.',
-                'recommendation' => 'Simpan hasil ini dan konsultasikan dengan Lembaga Bantuan Hukum (LBH) atau Satgas PPKS.',
-                'disclaimer' => 'Hasil ini bukan keputusan hukum final.',
-            ];
-        }
-
-        return [
-            'type' => 'BUKAN_TPKS',
-            'hypotheses' => [],
-            'message' => 'Berdasarkan jawaban Anda, kejadian ini belum memenuhi unsur tindak pidana kekerasan seksual.',
-            'recommendation' => 'Konsultasikan dengan LBH atau Satgas PPKS.',
-            'disclaimer' => 'Hasil ini bukan keputusan hukum final.',
-        ];
-    }
+    // formatConclusion removed since it's no longer used
 }
