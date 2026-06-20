@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             HypothesisSeeder::class,
             QuestionSeeder::class,
             RuleSeeder::class,
+            HypothesisBapTemplateSeeder::class,
         ]);
     }
 }

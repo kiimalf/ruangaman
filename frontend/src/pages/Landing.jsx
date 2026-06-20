@@ -2,6 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import useSessionStore from '../store/sessionStore';
 import { startSession } from '../services/api';
 import { useState, useEffect } from 'react';
+import QuickExitButton from '../components/QuickExitButton';
+import AdminLoginButton from '../components/AdminLoginButton';
+import HelpButton from '../components/HelpButton';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -207,13 +210,19 @@ export default function Landing() {
           </p>
         </div>
 
-        {/* Icon bawah kiri & kanan */}
-        <div className="w-full flex justify-between items-end px-12 pb-8">
-          <span style={{ fontSize: 28 }} role="img" aria-label="sad face">😞</span>
-          <span style={{ fontSize: 28 }} role="img" aria-label="help">❓</span>
+       {/*
+             * ── 3 tombol fixed bawah ──
+             *
+             * Kiri   : AdminLoginButton  → /admin (Filament), tab baru, subtle
+             * Tengah : QuickExitButton   → clear session + redirect google.com
+             * Kanan  : HelpButton        → modal panduan penggunaan
+             *
+             * Semua komponen mengatur posisinya sendiri (position: fixed).
+             */}
+            <AdminLoginButton />
+            <QuickExitButton />
+            <HelpButton />
         </div>
-
-      </div>
     </div>
   );
 }
