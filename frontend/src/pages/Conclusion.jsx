@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import useSessionStore from '../store/sessionStore';
 import { getConclusion, API_URL } from '../services/api';
 import ConclusionCard from '../components/ConclusionCard';
-import QuickExitButton from '../components/QuickExitButton';
 import ProgressBar from '../components/ProgressBar';
+import QuickExitButton from '../components/QuickExitButton';
+import AdminLoginButton from '../components/AdminLoginButton';
+import HelpButton from '../components/HelpButton';
 
 export default function Conclusion() {
   const navigate = useNavigate();
@@ -162,15 +164,19 @@ export default function Conclusion() {
           </div>
         </div>
 
-        {/* ── Footer icons ── */}
-        <div className="w-full flex justify-between items-end px-12 pb-8">
-          <span style={{ fontSize: 28 }} role="img" aria-label="sad face">😞</span>
-          <span style={{ fontSize: 28 }} role="img" aria-label="help">❓</span>
-        </div>
-      </div>
-
-      {/* ── Quick Exit ── */}
-      <QuickExitButton />
+        {/*
+              * ── 3 tombol fixed bawah ──
+              *
+              * Kiri   : AdminLoginButton  → /admin (Filament), tab baru, subtle
+              * Tengah : QuickExitButton   → clear session + redirect google.com
+              * Kanan  : HelpButton        → modal panduan penggunaan
+              *
+              * Semua komponen mengatur posisinya sendiri (position: fixed).
+              */}
+             <AdminLoginButton />
+             <QuickExitButton />
+             <HelpButton />
+           </div>
     </div>
   );
 }

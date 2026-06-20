@@ -4,485 +4,305 @@
     <meta charset="UTF-8">
     <title>Draf Kronologis - RuangAman</title>
     <style>
-        /* ============================================================
-           FONT DECLARATIONS
-           - Ganti src url() dengan path font aktual di storage Laravel
-           - Contoh: storage_path('fonts/Qaligo.ttf')
-           ============================================================ */
+        /* Deklarasi Font */
         @font-face {
             font-family: 'Qaligo';
             src: url('{{ storage_path("fonts/Qaligo.ttf") }}') format('truetype');
-            font-weight: normal;
-            font-style: normal;
+            font-weight: 400;
         }
         @font-face {
             font-family: 'PlusJakartaSans';
             src: url('{{ storage_path("fonts/PlusJakartaSans-Regular.ttf") }}') format('truetype');
             font-weight: 400;
-            font-style: normal;
         }
         @font-face {
             font-family: 'PlusJakartaSans';
             src: url('{{ storage_path("fonts/PlusJakartaSans-Bold.ttf") }}') format('truetype');
             font-weight: 700;
-            font-style: normal;
         }
 
-        /* ============================================================
-           RESET & BASE
-           ============================================================ */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* ── PENGATURAN HALAMAN GLOBAL ── */
+        @page {
+            /* Margin diperbesar: Top, Right, Bottom, Left */
+            margin: 120px 50px 100px 50px; 
         }
 
         body {
-            font-family: 'PlusJakartaSans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-size: 12px;
-            color: #000000;
-            background: #ffffff;
-            line-height: 1.6;
-        }
-
-        /* ============================================================
-           PAGE LAYOUT
-           DomPDF page = 595px wide (A4), margin 32px kiri-kanan
-           ============================================================ */
-        .page {
-            width: 595px;
-            min-height: 842px;
-            position: relative;
-            background: #ffffff;
+            font-family: 'PlusJakartaSans', Helvetica, Arial, sans-serif;
+            font-size: 11pt;
+            color: #000;
+            background: #fff;
+            margin: 0; 
             padding: 0;
-            page-break-after: always;
-            overflow: hidden;
         }
 
-        .page:last-child {
-            page-break-after: auto;
+        /* ── MICRO HEADER ── */
+        header {
+            position: fixed;
+            top: -120px; /* Sesuai margin-top @page */
+            left: 0px;
+            right: 0px;
+            height: 80px;
+            padding-top: 35px; /* Mendorong teks menjauh dari ujung atas kertas */
         }
-
-        /* ============================================================
-           WATERMARK
-           Logo ruangaman transparan di tengah halaman
-           Ganti src dengan path asset aktual
-           ============================================================ */
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 300px;
-            height: 300px;
-            margin-top: -150px;
-            margin-left: -150px;
-            opacity: 0.08;
-            z-index: 0;
-        }
-
-        .watermark img {
+        
+        .header-table {
             width: 100%;
-            height: 100%;
-            object-fit: contain;
+            border-bottom: 2px solid #FFE85C;
+            padding-bottom: 5px;
         }
-
-        /* ============================================================
-           HEADER — sama di semua halaman
-           ============================================================ */
-        .page-header {
-            position: relative;
-            z-index: 1;
-            padding: 32px 32px 0 32px;
-        }
-
         .logo-text {
-            font-family: 'Qaligo', cursive;
-            font-size: 16px;
-            font-weight: 400;
+            font-family: 'Qaligo', serif;
+            font-size: 26pt;
             color: #BE0199;
-            display: inline-block;
+            line-height: 1;
+        }
+        .header-meta {
+            text-align: right;
+            vertical-align: bottom;
+            font-size: 8.5pt;
+            color: #555;
+            line-height: 1.4;
         }
 
-        /* Garis kuning horizontal di bawah logo */
-        .header-line {
+        /* ── MICRO FOOTER ── */
+        footer {
+            position: fixed;
+            bottom: -100px; /* Sesuai margin-bottom @page */
+            left: 0px;
+            right: 0px;
+            height: 60px;
+            padding-bottom: 30px; /* Mendorong teks menjauh dari ujung bawah kertas */
+        }
+
+        .footer-table {
             width: 100%;
-            border: none;
-            border-top: 4px solid #FFE85C;
-            margin-top: 8px;
-            margin-bottom: 0;
+            border-top: 1px solid #ddd;
+            padding-top: 8px;
         }
-
-        /* ============================================================
-           META INFO — ID Sesi & Tanggal, rata kanan
-           ============================================================ */
-        .meta-info {
-            position: relative;
-            z-index: 1;
-            text-align: right;
-            padding: 16px 32px 0 32px;
-            font-size: 12px;
-            color: #000000;
-            line-height: 1.5;
+        
+        .footer-disclaimer {
+            font-size: 7.5pt;
+            color: #666;
+            text-align: justify;
+            width: 85%;
+            vertical-align: top;
+            line-height: 1.4;
         }
-
-        /* ============================================================
-           FOOTER — www.ruangaman.co.id, posisi bawah
-           ============================================================ */
-        .page-footer {
-            position: absolute;
-            bottom: 20px;
-            left: 32px;
-            z-index: 1;
-            font-size: 12px;
+        
+        .footer-page {
+            font-size: 8pt;
             color: #BE0199;
-        }
-
-        /* ============================================================
-           CONTENT AREA — konten utama tiap halaman
-           ============================================================ */
-        .content {
-            position: relative;
-            z-index: 1;
-            padding: 0 32px;
-            margin-top: 24px;
-        }
-
-        /* ============================================================
-           HALAMAN 1 — Pesan Empati
-           ============================================================ */
-        .empathy-text {
-            text-align: justify;
-            font-size: 12px;
-            color: #000000;
-            line-height: 1.7;
-        }
-
-        .empathy-text .bold {
-            font-weight: 700;
-        }
-
-        /* ============================================================
-           HALAMAN 2 — Resume Kronologis
-           ============================================================ */
-        .identity-section {
-            font-size: 12px;
-            color: #000000;
-            line-height: 2;
-            margin-bottom: 16px;
-        }
-
-        .identity-row {
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .identity-label {
-            display: inline-block;
-            width: 140px;
-            vertical-align: top;
-        }
-
-        .identity-colon {
-            display: inline-block;
-            width: 12px;
-            vertical-align: top;
-        }
-
-        .identity-value {
-            display: inline-block;
-            vertical-align: top;
-        }
-
-        .section-subtitle {
-            font-size: 12px;
-            font-weight: 700;
-            color: #000000;
-            margin-top: 12px;
-            margin-bottom: 6px;
-        }
-
-        .rangkuman-text {
-            font-size: 12px;
-            color: #000000;
-            text-align: justify;
-            line-height: 1.7;
-        }
-
-        /* Deklarasi & tanda tangan */
-        .declaration-section {
-            margin-top: 40px;
-            font-size: 12px;
-            color: #000000;
-        }
-
-        .declaration-statement {
-            text-align: justify;
-            line-height: 1.6;
-            margin-bottom: 60px; /* ruang tanda tangan */
-        }
-
-        .signature-block {
+            font-weight: bold;
             text-align: right;
-            padding-right: 16px;
+            width: 15%;
+            vertical-align: top;
         }
 
-        .signature-label {
-            font-size: 12px;
-            color: #000000;
-            margin-bottom: 40px; /* ruang tanda tangan fisik */
+        .pagenum:before {
+            content: counter(page);
         }
 
-        .signature-name {
-            font-size: 12px;
-            color: #000000;
-            border-top: 1px solid #000000;
-            display: inline-block;
-            padding-top: 4px;
-            min-width: 140px;
+        /* ── WATERMARK ── */
+        .pdf-watermark {
+            position: fixed;
+            right: -100px;
+            bottom: -40px;
+            width: 750px;
+            opacity: 0.08;
+            z-index: -100;
+        }
+        .pdf-watermark img {
+            width: 100%;
+            height: auto;
         }
 
-        /* ============================================================
-           HALAMAN 3 — Log Q&A
-           ============================================================ */
-        .log-intro {
-            font-size: 12px;
-            color: #000000;
+        /* ── KONTEN UTAMA & UTILITAS ── */
+        main { position: relative; z-index: 1; }
+        .keep-together { page-break-inside: avoid; } 
+        .new-page { page-break-before: always; }
+        .b { font-weight: 700; }
+
+        /* Halaman 1: Teks Empati & Full Disclaimer */
+        .empathy-text {
+            font-size: 9pt; /* Sedikit dikecilkan agar pas 1 halaman */
             text-align: justify;
-            margin-bottom: 16px;
-            line-height: 1.6;
+            line-height: 1.55;
+            padding-top: 5px;
         }
-
-        .qa-item {
-            margin-bottom: 14px;
-            font-size: 12px;
-            color: #000000;
-            line-height: 1.6;
-            text-align: justify;
-        }
-
-        .qa-question {
-            font-weight: 400;
-        }
-
-        .qa-answer {
-            font-weight: 400;
-        }
-
-        /* ============================================================
-           DISCLAIMER — footer legal, semua halaman kecuali halaman 1
-           ============================================================ */
-        .disclaimer {
-            position: absolute;
-            bottom: 40px;
-            left: 32px;
-            right: 32px;
-            z-index: 1;
-            font-size: 10px;
-            color: #626262;
+        
+        .full-disclaimer-box {
+            margin-top: 25px;
+            padding: 12px 15px;
+            background-color: #fafafa;
+            border: 1px dashed #BE0199;
+            border-radius: 5px;
+            font-size: 8pt;
+            color: #444;
             text-align: justify;
             line-height: 1.5;
         }
 
-        .disclaimer strong {
-            font-weight: 700;
-            color: #626262;
-        }
+        /* Halaman Resume */
+        .identity-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .identity-table td { padding: 4px 0; font-size: 9pt; vertical-align: top; }
+        .id-label { width: 160px; }
+        .id-colon { width: 15px; }
+
+        .section-title { font-size: 10pt; font-weight: 700; margin-bottom: 12px; color: #000; }
+        .rangkuman-text { font-size: 9pt; text-align: justify; line-height: 1.7; margin-bottom: 20px;}
+
+        /* Area Tanda Tangan */
+        .signature-wrap { margin-top: 30px; }
+        .declaration-statement { font-size: 9pt; text-align: justify; line-height: 1.6; margin-bottom: 30px; }
+        .signature-block { text-align: right; }
+        .sig-label { font-size: 9pt; display: block; margin-bottom: 75px; }
+        .sig-line { display: inline-block; min-width: 200px; border-top: 1px solid #000; padding-top: 5px; font-size: 9pt; text-align: center; }
+
+        /* Halaman Log Q&A */   
+        .log-intro { font-size: 9pt; text-align: justify; line-height: 1.6; margin-bottom: 20px; }
+        .qa-item { font-size: 9pt; line-height: 1.55; text-align: justify; margin-bottom: 14px; }
+        .q-text { font-weight: bold; color: #333; }
     </style>
 </head>
 <body>
 
-{{-- ================================================================
-     HALAMAN 1 — Pesan Empati & Pengantar
-     ================================================================ --}}
-<div class="page">
+    <header>
+        <table class="header-table">
+            <tr>
+                <td style="vertical-align: bottom;"><span class="logo-text">ruangaman</span></td>
+                <td class="header-meta">
+                    ID Sesi: <strong>{{ strtoupper(substr($session['id'], 0, 8)) }}-****</strong><br>
+                    Dibuat: {{ \Carbon\Carbon::parse($session['started_at'])->locale('id')->isoFormat('D MMM YYYY, HH:mm') }} WIB
+                </td>
+            </tr>
+        </table>
+    </header>
 
-    {{-- Watermark --}}
-    <div class="watermark">
-        {{-- Ganti src dengan path asset logo RuangAman --}}
-        <img src="{{ public_path('images/ruangaman-logo-watermark.png') }}" alt="">
+    <footer>
+        <table class="footer-table">
+            <tr>
+                <td class="footer-disclaimer">
+                    <em><strong>Draf Otomatis:</strong> Dokumen ini bukan dokumen legal resmi. Jika digunakan dalam konteks hukum, harap konsultasikan dengan profesional/lembaga terkait. (www.ruangaman.co.id)</em>
+                </td>
+                <td class="footer-page">
+                    Hal. <span class="pagenum"></span>
+                </td>
+            </tr>
+        </table>
+    </footer>
+
+    <div class="pdf-watermark">
+        <img src="{{ public_path('images/ruangaman-logo-watermark.png') }}">
     </div>
 
-    {{-- Header --}}
-    <div class="page-header">
-        <span class="logo-text">ruangaman</span>
-        <hr class="header-line">
-    </div>
-
-    {{-- Meta Info --}}
-    <div class="meta-info">
-        ID Sesi: {{ substr($session['id'], 0, 8) }}-****<br>
-        Tanggal Dibuat: {{ \Carbon\Carbon::parse($session['started_at'])->locale('id')->isoFormat('D MMMM YYYY, HH:mm') }} WIB
-    </div>
-
-    {{-- Konten Empati --}}
-    <div class="content">
+    <main>
+        
         <div class="empathy-text">
-            <span class="bold">Tarik napas perlahan. Anda aman di sini.</span>
+            <span class="b">Tarik napas perlahan. Anda aman di sini.</span><br><br>
+            Kami memahami bahwa menceritakan kembali kejadian yang melukai Anda
+            membutuhkan keberanian yang luar biasa. Mungkin saat ini Anda merasa bingung,
+            takut, marah, atau bahkan tanpa sadar sedang menyalahkan diri sendiri atas apa yang
+            terjadi. Jika Anda merasakan hal tersebut, kami ingin Anda membaca kalimat ini dan
+            memercayainya: <span class="b">Apa yang terjadi pada Anda bukanlah salah Anda.</span>
             <br><br>
-            Kami memahami bahwa menceritakan kembali kejadian yang melukai Anda membutuhkan keberanian yang luar biasa. Mungkin saat ini Anda merasa bingung, takut, marah, atau bahkan tanpa sadar sedang menyalahkan diri sendiri atas apa yang terjadi. Jika Anda merasakan hal tersebut, kami ingin Anda membaca kalimat ini dan memercayainya: <span class="bold">Apa yang terjadi pada Anda bukanlah salah Anda.</span>
-            <br><br>
-            Tidak peduli apa yang Anda kenakan, di mana Anda berada, bagaimana situasi saat itu, atau respons Anda ketika kejadian itu berlangsung—Anda tidak mengundang tindakan tersebut, dan Anda sama sekali tidak pantas menerima perlakuan itu. <span class="bold">Tanggung jawab</span> atas kekerasan seksual selalu, dan akan selalu, <span class="bold">berada mutlak pada pelakunya.</span>
-            <br><br>
-            <span class="bold">Pengalaman, perasaan, dan rasa sakit Anda adalah nyata dan sangat valid.</span> Anda tidak sedang berlebihan. Berdasarkan cerita yang baru saja Anda bagikan, sistem kami telah memvalidasi bahwa tindakan yang Anda alami secara sah memenuhi unsur pelanggaran hukum dan Anda dilindungi penuh oleh Undang-Undang Tindak Pidana Kekerasan Seksual (UU TPKS No. 12 Tahun 2022).
-            <br><br>
-            Anda berhak atas ruang yang aman, keadilan, dan pemulihan. Mengisi formulir ini adalah langkah pertama yang sangat berani untuk mengambil kembali kendali atas diri Anda. Anda tidak harus melewati ini sendirian.
-            <br><br>
-            Sebagai bentuk dukungan, di halaman berikutnya sistem kami telah merangkum jawaban Anda menjadi sebuah <span class="bold">Draf Resume Kronologis.</span> Kami menyiapkan dokumen ini agar saat Anda siap untuk mencari bantuan ke Satgas PPKS, Lembaga Bantuan Hukum (LBH), atau konselor psikologi, Anda tidak perlu lagi memaksa diri Anda mengingat dan menceritakan ulang detail yang menyakitkan dari awal.
-            <br><br>
-            Anda cukup menyerahkan lembar berikutnya kepada mereka. <span class="bold">Ambil waktu sebanyak yang Anda butuhkan.</span> Kapan pun Anda siap, dukungan selalu ada untuk Anda.
-        </div>
-    </div>
-
-    {{-- Footer --}}
-    <div class="page-footer">www.ruangaman.co.id</div>
-
-</div>
-
-
-{{-- ================================================================
-     HALAMAN 2 — Resume Kronologis (Data Diri + Rangkuman)
-     ================================================================ --}}
-<div class="page">
-
-    {{-- Watermark --}}
-    <div class="watermark">
-        <img src="{{ public_path('images/ruangaman-logo-watermark.png') }}" alt="">
-    </div>
-
-    {{-- Header --}}
-    <div class="page-header">
-        <span class="logo-text">ruangaman</span>
-        <hr class="header-line">
-    </div>
-
-    {{-- Meta Info --}}
-    <div class="meta-info">
-        ID Sesi: {{ substr($session['id'], 0, 8) }}-****<br>
-        Tanggal Dibuat: {{ \Carbon\Carbon::parse($session['started_at'])->locale('id')->isoFormat('D MMMM YYYY, HH:mm') }} WIB
-    </div>
-
-    {{-- Konten Resume --}}
-    <div class="content">
-
-        {{-- Identitas — Nama dikosongkan sesuai ketentuan anonimitas --}}
-        <div class="identity-section">
-            <div class="identity-row">
-                <span class="identity-label">Nama</span>
-                <span class="identity-colon">:</span>
-                <span class="identity-value">&nbsp;</span>
-            </div>
-            <div class="identity-row">
-                <span class="identity-label">Alamat</span>
-                <span class="identity-colon">:</span>
-                <span class="identity-value">&nbsp;</span>
-            </div>
-            <div class="identity-row">
-                <span class="identity-label">Nomor Telpon</span>
-                <span class="identity-colon">:</span>
-                <span class="identity-value">&nbsp;</span>
-            </div>
-            <div class="identity-row">
-                <span class="identity-label">Klasifikasi Potensi Hukum</span>
-                <span class="identity-colon">:</span>
-                {{-- Klasifikasi pasal adaptif dari hipotesis yang terbukti --}}
-                <span class="identity-value">{{ $conclusion['klasifikasi'] }}</span>
-            </div>
+            Tidak peduli apa yang Anda kenakan, di mana Anda berada, bagaimana situasi saat itu,
+            atau respons Anda ketika kejadian itu berlangsung—Anda tidak mengundang tindakan
+            tersebut, dan Anda sama sekali tidak pantas menerima perlakuan itu.
+            <span class="b">Tanggung jawab</span> atas kekerasan seksual selalu, dan akan selalu,
+            <span class="b">berada mutlak pada pelakunya.</span><br><br>
+            <span class="b">Pengalaman, perasaan, dan rasa sakit Anda adalah nyata dan sangat valid.</span>
+            Anda tidak sedang berlebihan. Berdasarkan cerita yang baru saja Anda bagikan,
+            sistem kami telah memvalidasi bahwa tindakan yang Anda alami secara sah memenuhi
+            unsur pelanggaran hukum dan Anda dilindungi penuh oleh Undang-Undang Tindak
+            Pidana Kekerasan Seksual (UU TPKS No. 12 Tahun 2022).<br><br>
+            Anda berhak atas ruang yang aman, keadilan, dan pemulihan. Mengisi formulir ini
+            adalah langkah pertama yang sangat berani untuk mengambil kembali kendali atas diri
+            Anda. Anda tidak harus melewati ini sendirian.<br><br>
+            Sebagai bentuk dukungan, di halaman berikutnya sistem kami telah merangkum
+            jawaban Anda menjadi sebuah <span class="b">Draf Resume Kronologis.</span> Kami
+            menyiapkan dokumen ini agar saat Anda siap untuk mencari bantuan ke Satgas PPKS,
+            Lembaga Bantuan Hukum (LBH), atau konselor psikologi, Anda tidak perlu lagi
+            memaksa diri Anda mengingat dan menceritakan ulang detail yang menyakitkan dari
+            awal.<br><br>
+            Anda cukup menyerahkan lembar berikutnya kepada mereka.
+            <span class="b">Ambil waktu sebanyak yang Anda butuhkan.</span>
+            Kapan pun Anda siap, dukungan selalu ada untuk Anda.
         </div>
 
-        {{-- Rangkuman Kejadian — narasi adaptif dari bap_template hipotesis --}}
-        <div class="section-subtitle">Rangkuman Kejadian (Berdasarkan Validasi Sistem)</div>
-        <div class="rangkuman-text">
-            {{-- $conclusion['rangkuman'] berisi gabungan bap_template dari semua hipotesis yang proven --}}
-            {!! nl2br(e($conclusion['rangkuman'])) !!}
+        <div class="full-disclaimer-box">
+            <strong>Catatan Penting (Disclaimer):</strong><br>
+            Dokumen ini adalah draf kronologis yang dirangkum secara otomatis berdasarkan jawaban yang Anda berikan dalam sesi ini. Meskipun sistem kami telah memvalidasi bahwa jawaban Anda memenuhi unsur pelanggaran hukum, dokumen ini belum merupakan dokumen resmi yang dapat digunakan untuk proses hukum atau administratif apa pun. Jika Anda berencana untuk menggunakan informasi ini dalam konteks legal, harap konsultasikan dengan profesional hukum atau lembaga terkait untuk memastikan bahwa dokumen Anda memenuhi persyaratan yang diperlukan.
         </div>
 
-        {{-- Deklarasi Kronologi Penyintas --}}
-        <div class="declaration-section">
-            <div class="declaration-statement">
-                Dengan ini saya menyatakan bahwa resume kronologi yang dirangkum oleh sistem ini adalah benar dan sesuai dengan kejadian yang saya alami.
+
+        <div class="new-page">
+            <table class="identity-table">
+                <tr>
+                    <td class="id-label">Nama</td>
+                    <td class="id-colon">:</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="id-label">Alamat</td>
+                    <td class="id-colon">:</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="id-label">Nomor Telpon</td>
+                    <td class="id-colon">:</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="id-label">Klasifikasi Potensi Hukum</td>
+                    <td class="id-colon">:</td>
+                    <td><strong>{{ $conclusion['klasifikasi'] }}</strong></td>
+                </tr>
+            </table>
+
+            <div class="section-title">Rangkuman Kejadian (Berdasarkan Validasi Sistem)</div>
+            <div class="rangkuman-text">
+                {!! nl2br(e($conclusion['rangkuman'])) !!}
             </div>
-            <div class="signature-block">
-                <div class="signature-label">Deklarasi Kronologi Penyintas</div>
-                <br><br><br>
-                <div class="signature-name">&nbsp;</div>
+
+            <div class="signature-wrap keep-together">
+                <div class="declaration-statement">
+                    Dengan ini saya menyatakan bahwa resume kronologi yang dirangkum oleh
+                    sistem ini adalah benar dan sesuai dengan kejadian yang saya alami.
+                </div>
+                <div class="signature-block">
+                    <span class="sig-label">Deklarasi Kronologi Penyintas</span>
+                    <span class="sig-line">Tanda Tangan / Nama Terang</span>
+                </div>
             </div>
         </div>
 
-    </div>
 
-    {{-- Disclaimer --}}
-    <div class="disclaimer">
-        <strong>PENTING (DISCLAIMER HUKUM):</strong> Dokumen ini dihasilkan secara otomatis oleh sistem pakar RuangAman dan bersifat anonim. Dokumen ini BUKAN merupakan alat bukti hukum formal (seperti Berita Acara Pemeriksaan dari kepolisian) dan TIDAK dapat menggantikan proses penyelidikan resmi oleh aparat penegak hukum. Hasil identifikasi ini hanya bertujuan untuk memberikan edukasi dan rujukan awal bagi penyintas untuk menentukan langkah perlindungan atau pemulihan, serta memudahkan pelaporan ke Satgas PPKS atau Lembaga Bantuan Hukum (LBH).
-    </div>
+        <div class="new-page">
+            <div class="section-title">Log Interaksi Sistem</div>
+            <div class="log-intro">
+                Berikut adalah log interaksi penyintas dengan sistem yang mengonfirmasi
+                pemenuhan unsur pelanggaran UU TPKS :
+            </div>
 
-    {{-- Footer --}}
-    <div class="page-footer">www.ruangaman.co.id</div>
-
-</div>
-
-
-{{-- ================================================================
-     HALAMAN 3 — Log Interaksi Q&A (Adaptif per Sesi)
-     ================================================================ --}}
-<div class="page">
-
-    {{-- Watermark --}}
-    <div class="watermark">
-        <img src="{{ public_path('images/ruangaman-logo-watermark.png') }}" alt="">
-    </div>
-
-    {{-- Header --}}
-    <div class="page-header">
-        <span class="logo-text">ruangaman</span>
-        <hr class="header-line">
-    </div>
-
-    {{-- Meta Info --}}
-    <div class="meta-info">
-        ID Sesi: {{ substr($session['id'], 0, 8) }}-****<br>
-        Tanggal Dibuat: {{ \Carbon\Carbon::parse($session['started_at'])->locale('id')->isoFormat('D MMMM YYYY, HH:mm') }} WIB
-    </div>
-
-    {{-- Log Q&A --}}
-    <div class="content">
-
-        <div class="log-intro">
-            Berikut adalah log interaksi penyintas dengan sistem yang mengonfirmasi pemenuhan unsur pelanggaran UU TPKS :
-        </div>
-
-        {{-- Loop semua jawaban sesi secara adaptif --}}
-        @foreach($answers as $item)
-            <div class="qa-item">
-                <div class="qa-question">Q: {{ $item['question_text'] }}</div>
-                <div class="qa-answer">
+            @foreach($answers as $item)
+                <div class="qa-item keep-together">
+                    <span class="q-text">Q: {{ $item['question_text'] }}</span><br>
                     A: @if($item['answer'] === 'YA') Ya.
                        @elseif($item['answer'] === 'TIDAK') Tidak.
                        @else Tidak Yakin.
                        @endif
                 </div>
-            </div>
-        @endforeach
+            @endforeach
 
-        {{-- Deklarasi Kronologi Penyintas --}}
-        <div class="declaration-section" style="margin-top: 32px;">
-            <div class="signature-block">
-                <div class="signature-label">Deklarasi Kronologi Penyintas</div>
-                <br><br><br>
-                <div class="signature-name">&nbsp;</div>
+            <div class="signature-wrap keep-together">
+                <div class="signature-block">
+                    <span class="sig-label">Deklarasi Kronologi Penyintas</span>
+                    <span class="sig-line">Tanda Tangan / Nama Terang</span>
+                </div>
             </div>
         </div>
 
-    </div>
-
-    {{-- Disclaimer --}}
-    <div class="disclaimer">
-        <strong>PENTING (DISCLAIMER HUKUM):</strong> Dokumen ini dihasilkan secara otomatis oleh sistem pakar RuangAman dan bersifat anonim. Dokumen ini BUKAN merupakan alat bukti hukum formal (seperti Berita Acara Pemeriksaan dari kepolisian) dan TIDAK dapat menggantikan proses penyelidikan resmi oleh aparat penegak hukum. Hasil identifikasi ini hanya bertujuan untuk memberikan edukasi dan rujukan awal bagi penyintas untuk menentukan langkah perlindungan atau pemulihan, serta memudahkan pelaporan ke Satgas PPKS atau Lembaga Bantuan Hukum (LBH).
-    </div>
-
-    {{-- Footer --}}
-    <div class="page-footer">www.ruangaman.co.id</div>
-
-</div>
-
+    </main>
 </body>
 </html>

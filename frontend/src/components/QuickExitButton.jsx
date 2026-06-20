@@ -1,5 +1,13 @@
 import { useEffect, useRef } from 'react';
 import useSessionStore from '../store/sessionStore';
+import QuitIcon from '../assets/QuitIcon.svg';
+
+/**
+ * QuickExitButton.jsx
+ * Posisi: fixed, tengah bawah halaman.
+ * Trigger: klik tombol ATAU tekan Esc 2× dalam 1 detik.
+ * Aksi: clear session → replace ke google.com (history tidak bisa back).
+ */
 
 export default function QuickExitButton() {
   const resetSession = useSessionStore((state) => state.resetSession);
@@ -7,10 +15,8 @@ export default function QuickExitButton() {
   const escapeTimer = useRef(null);
 
   const handleQuickExit = () => {
-    // 1. Reset state (termasuk sessionToken di sessionStorage)
     resetSession();
-    sessionStorage.clear(); // just to be safe
-    // 2. Replace history agar tombol back tidak kembali ke app
+    sessionStorage.clear();
     window.location.replace('https://www.google.com');
   };
 
@@ -18,19 +24,15 @@ export default function QuickExitButton() {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         escapeCount.current += 1;
-        
         if (escapeCount.current >= 2) {
           handleQuickExit();
         }
-        
-        // Reset counter after 1 second
         clearTimeout(escapeTimer.current);
         escapeTimer.current = setTimeout(() => {
           escapeCount.current = 0;
         }, 1000);
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -40,13 +42,46 @@ export default function QuickExitButton() {
 
   return (
     <button
-      className="quick-exit-btn"
       onClick={handleQuickExit}
-      title="Keluar Cepat (tekan Esc 2x)"
+      title="Keluar Cepat (tekan Esc 2×)"
       aria-label="Keluar cepat dari aplikasi"
-    >
-      ✕ Keluar Cepat
-    </button>
-  )
-}
+        style={{
+          position: 'fixed',
+          bottom: 28,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 9999,
 
+          border: 'none',
+          background: 'transparent',
+          padding: 0,
+
+          cursor: 'pointer',
+
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+            onMouseEnter={e => {
+        e.currentTarget.style.transform =
+          'translateX(-50%) scale(1.05)';
+      }}
+
+      onMouseLeave={e => {
+        e.currentTarget.style.transform =
+          'translateX(-50%) scale(1)';
+      }}
+    >
+      {/* X icon */}
+      <img
+        src={QuitIcon}
+        alt="Keluar Cepat"
+        style={{
+          width: '64px',
+          height: '64px',
+          display: 'block',
+        }}
+      />
+    </button>
+  );
+}
