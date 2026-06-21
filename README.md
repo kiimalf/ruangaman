@@ -4,7 +4,6 @@
 
 [![SDGs 5](https://img.shields.io/badge/SDGs-5%20Kesetaraan%20Gender-E5243B?style=flat-square)](https://sdgs.un.org/goals/goal5)
 [![SDGs 16](https://img.shields.io/badge/SDGs-16%20Perdamaian%20%26%20Keadilan-00689D?style=flat-square)](https://sdgs.un.org/goals/goal16)
-[![OLIVIA 2026](https://img.shields.io/badge/Kompetisi-OLIVIA%202026-1A5C7A?style=flat-square)]()
 
 ---
 
@@ -100,6 +99,9 @@ cd frontend
 # Install dependencies
 npm install
 
+# Copy environment file
+cp .env.example .env
+
 # Jalankan dev server
 npm run dev
 ```
@@ -129,8 +131,7 @@ ruangaman/
 │       ├── components/       # UI components
 │       └── store/            # Zustand state management
 │
-├── README.md
-└── prd.md                    # Product Requirements Document
+└── README.md
 ```
 
 ---
@@ -173,10 +174,3 @@ Setelah membuat akun admin:
 ## ⚠️ Disclaimer
 
 > Hasil klasifikasi dari RuangAman **bukan keputusan hukum final**. Platform ini bertujuan memberikan pemahaman awal tentang UU TPKS. Konsultasikan dengan Lembaga Bantuan Hukum (LBH) atau Satgas PPKS untuk penanganan lebih lanjut.
-
----
-
-## 📄 Lisensi
-
-Proyek ini dikembangkan untuk kompetisi **OLIVIA 2026** oleh Tim **Chipmunk**.
-Dokumen bersifat confidential — hanya untuk tim internal & juri.
