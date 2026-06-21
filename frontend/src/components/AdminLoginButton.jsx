@@ -10,7 +10,8 @@ import IconLogin from "../assets/IconLogin.svg";
 export default function AdminLoginButton() {
   const handleClick = () => {
     // Buka di tab baru agar session penyintas tidak terganggu
-    window.open('/admin', '_blank', 'noopener,noreferrer');
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+    window.open(`${backendUrl}/admin`, '_blank', 'noopener,noreferrer');
   };
 
   return (

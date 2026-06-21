@@ -13,7 +13,6 @@ function App() {
           <Route path="/session" element={<Session />} />
           <Route path="/conclusion" element={<Conclusion />} />
         </Routes>
-        <QuickExitButton />
       </div>
     </Router>
   )
